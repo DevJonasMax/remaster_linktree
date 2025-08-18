@@ -5,12 +5,11 @@ import SkeletonPreviewLinks from "@/components/skeleton/skeletonPreviewLinks";
 export default function AddLinks() {
     return (
         <div className="w-full flex gap-5 flex-wrap">
-            {/* adicionar links */}
+            {/* adicionar links  --- */}
             <div className="flex-2 flex-col ">
                 <div className="flex my-5 items-center justify-start">
                     <h1 className="text-2xl font-bold">Adicione seus links</h1>
                 </div>
-
                 <section className="flex flex-col border-1 pt-10 pb-5 px-5 gap-5 rounded-lg ">
                     <div>
                         <label htmlFor="url">URL do link</label>
