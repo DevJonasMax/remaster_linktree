@@ -1,26 +1,40 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* 🎨 Tema Claro */
+@theme {
+    --color-primary: #1d4ed8; /* Azul principal */
+    --color-secondary: #9333ea; /* Roxo secundário */
+    --color-accent: #f59e0b; /* Amarelo destaque */
+    --color-background: #f9fafb; /* Fundo claro */
+    --color-foreground: #111827; /* Texto principal */
+    --color-muted: #6b7280; /* Texto secundário */
+
+    --font-sans: var(--font-inter), ui-sans-serif, system-ui;
+    --font-mono: var(--font-roboto-mono), ui-monospace, monospace;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* 🌙 Tema Escuro */
+:root.dark {
+    --color-primary: #60a5fa;
+    --color-secondary: #c084fc;
+    --color-accent: #fbbf24;
+    --color-background: #111827;
+    --color-foreground: #f9fafb;
+    --color-muted: #9ca3af;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* 📄 Estilos base */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    @apply font-sans;
+}
+
+/* 📦 Container padrão */
+.container-padrao {
+    @apply w-full max-w-6xl mx-auto px-4;
+}
+code,
+pre {
+    @apply font-mono;
 }
