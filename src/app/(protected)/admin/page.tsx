@@ -6,6 +6,8 @@ import TabNavigation from "@/components/tabs/tabNavigation";
 import { useState } from "react";
 import { FaPlus, FaList, FaPager } from "react-icons/fa";
 import AddLinks from "@/components/contentTabs/addLinks";
+import ListLinks from "@/components/contentTabs/listLinks";
+
 const tabs = [
     {
         name: "Adicionar Links",
@@ -15,7 +17,7 @@ const tabs = [
     {
         name: "Lista de Links",
         icon: FaList,
-        content: <div>Conteúdo da Lista de Links</div>,
+        content: <ListLinks />,
     },
     {
         name: "Preview Page",

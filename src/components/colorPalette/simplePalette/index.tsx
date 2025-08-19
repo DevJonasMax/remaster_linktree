@@ -7,7 +7,7 @@ type SimplePaletteProps = {
 const colors = [
     "#111827", // preto suave (body text)
     "#374151", // cinza escuro (subtítulos)
-    "#6B7280", // cinza médio (texto secundário)
+    "#FFFFFF", // cinza médio (texto secundário)
     "#9CA3AF", // cinza claro (desabilitado)
 
     "#2563EB", // azul (links, destaque)

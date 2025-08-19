@@ -9,7 +9,7 @@ export default function HeaderPublic() {
                     <Link href="/">
                         <div className="w-35 h-35 relative">
                             <Image
-                                src="/logo3d_500x500_black.webp"
+                                src="/logo_500x500_black_01.webp"
                                 alt="logo"
                                 fill
                                 style={{ objectFit: "contain" }}

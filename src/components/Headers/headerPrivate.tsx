@@ -10,7 +10,7 @@ export default function HeaderPrivate() {
                 <Link href="/">
                     <div className="relative h-30 w-30 cursor-pointer -translate-x-8 -translate-y-1.5">
                         <Image
-                            src="/logo_500x500_black.webp"
+                            src="/logo_500x500_black_01.webp"
                             alt="logo"
                             fill
                             style={{ objectFit: "contain" }}
