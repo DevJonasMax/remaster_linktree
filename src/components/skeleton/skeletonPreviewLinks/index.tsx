@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import { Skeleton } from "@heroui/skeleton";
 
-export default function SkeletonPreviewLinks() {
+export default function SkeletonPreviewLinks({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
     const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
@@ -12,8 +16,8 @@ export default function SkeletonPreviewLinks() {
     }, []);
 
     return loaded ? (
-        <p>Conteúdo carregado</p>
+        children
     ) : (
-        <Skeleton className="w-[200px] h-[20px] rounded bg-gray-300" />
+        <Skeleton className="w-[200px] h-[20px] rounded bg-gray-300 pulse" />
     );
 }

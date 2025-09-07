@@ -17,12 +17,17 @@ export interface setLinks extends LinksProps {
     setFaviconOficial: (favicon: string) => void;
 }
 
+import { RegisterOptions, UseFormRegister } from "react-hook-form";
 export interface InputProps
     extends React.InputHTMLAttributes<HTMLInputElement> {
     inputError?: boolean;
+    error?: string;
     width?: string;
     className?: string;
     placeholder?: string;
+    register: UseFormRegister<any>;
+    name: string;
+    rules?: RegisterOptions;
 }
 
 export interface TabNavigationProps {
