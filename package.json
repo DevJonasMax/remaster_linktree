@@ -10,10 +10,18 @@
   },
   "dependencies": {
     "@heroui/skeleton": "^2.2.15",
+    "@hookform/resolvers": "^5.2.2",
+    "@radix-ui/react-slot": "^1.2.3",
+    "antd": "^5.27.3",
+    "class-variance-authority": "^0.7.1",
+    "emoji-picker-react": "^4.13.3",
+    "lucide-react": "^0.544.0",
     "next": "15.4.6",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "react-icons": "^5.5.0"
+    "react-hook-form": "^7.62.0",
+    "react-icons": "^5.5.0",
+    "zod": "^4.1.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

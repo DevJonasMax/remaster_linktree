@@ -7,7 +7,6 @@ export default function TabNavigation({
 }: TabNavigationProps) {
     return (
         <div className="w-15 h-full flex flex-col items-center gap-3 px-5 py-2 border-1 border-neutral-700/20 rounded-lg">
-            {/* 标签导航 */}
             {tabs.map((tab) => (
                 <div
                     key={tab.name}

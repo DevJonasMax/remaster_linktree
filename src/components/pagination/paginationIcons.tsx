@@ -162,23 +162,24 @@ export default function PaginationIcons({
 
                     {/* Ellipsis (somente se tiver mais páginas após o range visível) */}
                     {getPageRange().at(-1)! < totalPages && (
-                        <PaginationItem>
-                            <PaginationEllipsis />
-                        </PaginationItem>
+                        <>
+                            <PaginationItem>
+                                <PaginationEllipsis />
+                            </PaginationItem>
+                            <PaginationItem>
+                                <PaginationLink
+                                    href="#"
+                                    isActive={currentPage === totalPages}
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handlePageChange(totalPages);
+                                    }}
+                                >
+                                    {totalPages}
+                                </PaginationLink>
+                            </PaginationItem>
+                        </>
                     )}
-                    <PaginationItem>
-                        <PaginationLink
-                            href="#"
-                            isActive={currentPage === totalPages}
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handlePageChange(totalPages);
-                            }}
-                        >
-                            {totalPages}
-                        </PaginationLink>
-                    </PaginationItem>
-
                     <PaginationItem>
                         <PaginationNext
                             href="#"

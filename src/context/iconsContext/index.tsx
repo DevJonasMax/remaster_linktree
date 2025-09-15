@@ -1,3 +1,4 @@
+"use client";
 import { createContext, useState, ReactNode, useContext } from "react";
 import * as Icons from "react-icons/fa";
 
@@ -43,18 +44,49 @@ export const useIconContext = () => {
     return context;
 };
 
-export default function DisplayIcons({ size }: { size: number }) {
-    const { iconSelected, colorIcon } = useContext(IconContext);
-    if (!iconSelected) return null;
+interface DisplayProps {
+    size: number;
+    emoji?: string | null;
+    icon?: string | null;
+    color?: string; // cor opcional para o ícone
+}
+
+export default function DisplayIcons({
+    size,
+    emoji,
+    icon,
+    color,
+}: DisplayProps) {
+    // Apenas como fallback, se você ainda quiser usar contexto
+    const { iconSelected: contextIcon, colorIcon: contextColor } =
+        useContext(IconContext);
+
+    // Renderiza emoji se houver
+    if (emoji) {
+        return (
+            <div
+                className="h-auto flex items-center justify-center"
+                style={{
+                    lineHeight: 1,
+                    fontSize: size - 4,
+                }}
+            >
+                {emoji}
+            </div>
+        );
+    }
+
+    // Usa icon passado via prop ou fallback do contexto
+    const iconToRender = icon || contextIcon;
+    const iconColor = color || contextColor;
+
+    if (!iconToRender) return null;
+
     const IconComponent = (Icons as Record<string, React.ComponentType<any>>)[
-        iconSelected
+        iconToRender
     ];
-    return (
-        <IconComponent
-            style={{
-                color: colorIcon,
-                fontSize: size,
-            }}
-        />
-    );
+
+    if (!IconComponent) return null;
+
+    return <IconComponent style={{ color: iconColor, fontSize: size }} />;
 }

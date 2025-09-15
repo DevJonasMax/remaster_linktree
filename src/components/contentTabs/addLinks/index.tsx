@@ -6,69 +6,120 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import EmojisPikers from "@/components/emojisPikers";
-import { useState } from "react";
-import { FaRainbow } from "react-icons/fa";
+import { useState, useMemo } from "react";
+import { FaRainbow, FaTrashAlt } from "react-icons/fa";
+import { MdOutlineClose } from "react-icons/md";
 import PaginationIcons from "@/components/pagination/paginationIcons";
 
-const schema = z.object({
-    url: z.url({
-        message: "URL inválida",
-        protocol: /^https?$/,
-        hostname: /^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$/,
-        normalize: true,
-    }),
-    name: z.string().min(1, {
-        message: "Campo obrigatório",
-    }),
-});
-
-type formData = z.infer<typeof schema>;
+interface EmojiClickData {
+    emoji: string;
+    unified: string;
+    names: string[];
+}
+import DisplayIcons, { useIconContext } from "@/context/iconsContext";
+import { schema, formData } from "@/schema/formLinks.schema";
+import Modal from "@/components/modal";
+import CustomPallete from "@/components/colorPalette/customPallete";
+import { useColorContext } from "@/context/colorContext";
 
 export default function AddLinks() {
     const [openEmoji, setOpenEmoji] = useState<boolean>(false);
     const [openIcons, setOpenIcons] = useState<boolean>(false);
-    const [emoji, setEmoji] = useState<string>("");
+    const [hideIcon, setHideIcon] = useState<boolean>(false);
+
+    const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
+    const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
+    const [bgLinksColor, setBgLinksColor] = useState<string>("#ba9b29");
+
+    const { colorIcon, removeIcon } = useIconContext();
+    const { colorSelected, handleSetColor } = useColorContext();
+
     const {
         register,
         handleSubmit,
+        setValue,
+        watch,
         formState: { errors },
     } = useForm<formData>({
         resolver: zodResolver(schema),
         mode: "onChange",
     });
 
+    const linkName = watch("name");
+    const url = watch("url");
+
+    const domain = useMemo(() => {
+        try {
+            return url ? new URL(url).hostname.replace("www.", "") : null;
+        } catch {
+            return null;
+        }
+    }, [url]);
+
+    const handleOpenIcons = () => {
+        if (openEmoji) setOpenEmoji(false);
+        setOpenIcons(!openIcons);
+    };
+
+    const handleOpenEmoji = () => {
+        if (openIcons) setOpenIcons(false);
+        setOpenEmoji(!openEmoji);
+    };
+
+    const handleClose = () => {
+        setOpenEmoji(false);
+        setOpenIcons(false);
+    };
+
+    const handleEmojiSelect = (emojiData: EmojiClickData) => {
+        const emojiObj = {
+            emoji: emojiData.emoji,
+            unicode: emojiData.unified,
+            name: emojiData.names[0],
+        };
+        setValue("icon", emojiObj, { shouldValidate: true });
+        setSelectedEmoji(emojiData.emoji);
+        setSelectedIcon(null);
+        removeIcon();
+    };
+
+    const handleIconSelect = (iconName: string) => {
+        const iconObj = {
+            icon: iconName,
+            color: colorIcon || "#ba9b29",
+            size: 24,
+        };
+        setValue("icon", iconObj, { shouldValidate: true });
+        setSelectedIcon(iconName);
+        setSelectedEmoji(null);
+    };
+
+    const handleRemoveIcon = () => {
+        setValue("icon", null, { shouldValidate: true });
+        setSelectedEmoji(null);
+        setSelectedIcon(null);
+        removeIcon();
+    };
+
     const onSubmit = (data: formData) => {
         console.log(data);
     };
 
-    const handleOpenIcons = () => {
-        if (openEmoji) {
-            setOpenEmoji(false);
-        }
-        setOpenIcons(!openIcons);
-    };
-    const handleOpenEmoji = () => {
-        if (openIcons) {
-            setOpenIcons(false);
-        }
-        setOpenEmoji(!openEmoji);
-    };
-
     return (
-        <div className="w-full flex gap-5 flex-wrap">
-            {/* adicionar links  --- */}
-            <div className="flex-2 flex-col ">
+        <div className="w-full flex flex-wrap gap-5">
+            {/* Formulário de adicionar links */}
+            <div className="flex-[2] flex-col">
                 <div className="flex my-5 items-center justify-start">
                     <h1 className="text-2xl font-bold">Adicione seus links</h1>
                 </div>
-                <section className="flex flex-col border-1 pt-10 pb-5 px-5 gap-5 rounded-lg ">
+                <section className="flex flex-col border-1 pt-10 pb-5 px-5 gap-5 rounded-lg">
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         className="w-full flex flex-col gap-5"
                     >
+                        {/* URL */}
                         <div>
                             <label htmlFor="url">URL do link</label>
-
                             <Inputs
                                 type="url"
                                 name="url"
@@ -86,51 +137,124 @@ export default function AddLinks() {
                                 error={errors.url?.message}
                             />
                         </div>
+
+                        {/* Nome */}
                         <div>
                             <label htmlFor="name">Nome do link</label>
-
                             <Inputs
                                 placeholder="exemplo: Meu canal do Youtube"
                                 type="text"
                                 className="w-full"
                                 name="name"
                                 register={register}
-                                rules={{
-                                    required: "Campo obrigatório",
-                                }}
+                                rules={{ required: "Campo obrigatório" }}
                                 inputError={!!errors.name?.message}
                                 error={errors.name?.message}
                             />
                         </div>
 
-                        <div className="w-full flex items-center justify-start gap-2">
-                            <button
-                                className="p-1 rounded-full bg-gray-700/10 cursor-pointer"
-                                onClick={handleOpenEmoji}
+                        {/* Ocultar ícone */}
+                        <div className="w-full flex items-center justify-end gap-4">
+                            <label
+                                htmlFor="hideDomainIcon"
+                                className="text-lg font-sans"
                             >
-                                &#x1F60A;
-                            </button>
-                            <button
-                                className="p-2 rounded-full bg-gray-700/10 cursor-pointer"
-                                onClick={handleOpenIcons}
-                            >
-                                <FaRainbow size={20} />
-                            </button>
+                                não mostrar ícone
+                            </label>
+                            <input
+                                type="checkbox"
+                                id="hideDomainIcon"
+                                checked={hideIcon}
+                                onChange={(e) => {
+                                    setHideIcon(e.target.checked);
+                                    handleClose();
+                                    handleRemoveIcon();
+                                }}
+                                className="w-5 h-5"
+                            />
                         </div>
 
-                        {openEmoji && <EmojisPikers setEmoji={setEmoji} />}
-                        {openIcons && <PaginationIcons />}
-                        <div className="flex items-center justify-between pr-5">
-                            <SimplePalette />
-
-                            <div>
-                                <button className="bg-cyan-600 p-2 rounded-lg font-medium text-amber-50 cursor-pointer hover:bg-cyan-500">
-                                    Personalizar
-                                </button>
+                        {/* Botões de emoji e ícone */}
+                        <div className="w-full flex items-center justify-between">
+                            <div className="w-fit px-4 py-2 flex items-center gap-5 bg-gray-700/10 rounded-full">
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        type="button"
+                                        className={`p-1 rounded-full bg-gray-700/10 cursor-pointer ${
+                                            hideIcon
+                                                ? "text-gray-400"
+                                                : "text-black"
+                                        }`}
+                                        onClick={handleOpenEmoji}
+                                        disabled={hideIcon}
+                                    >
+                                        &#x1F60A;
+                                    </button>
+                                    <button
+                                        type="button"
+                                        className={`p-2 rounded-full bg-gray-700/10 cursor-pointer ${
+                                            hideIcon
+                                                ? "text-gray-400"
+                                                : "text-black"
+                                        }`}
+                                        onClick={handleOpenIcons}
+                                        disabled={hideIcon}
+                                    >
+                                        <FaRainbow size={20} />
+                                    </button>
+                                </div>
+                                {(openEmoji || openIcons) && (
+                                    <button
+                                        type="button"
+                                        className="p-2 rounded-full bg-gray-700/10 cursor-pointer text-black font-bold hover:bg-gray-700/30"
+                                        onClick={handleClose}
+                                    >
+                                        <MdOutlineClose size={20} />
+                                    </button>
+                                )}
                             </div>
+
+                            {(selectedIcon || selectedEmoji) && (
+                                <button
+                                    type="button"
+                                    onClick={handleRemoveIcon}
+                                    className="w-fit p-2 flex items-center justify-center gap-2 bg-gray-700/10 rounded-full cursor-pointer"
+                                >
+                                    <FaTrashAlt />
+                                </button>
+                            )}
                         </div>
+
+                        {/* Painel de seleção */}
+                        {openEmoji && (
+                            <EmojisPikers setEmoji={handleEmojiSelect} />
+                        )}
+                        {openIcons && (
+                            <PaginationIcons
+                                size={25}
+                                onIconClick={handleIconSelect}
+                            />
+                        )}
+
+                        {/* Paleta e personalizar */}
+                        <h2 className="text-lg font-sans">
+                            Cor de fundo do link
+                        </h2>
+                        <div className="flex  justify-between">
+                            <SimplePalette onSelectColor={setBgLinksColor} />
+
+                            <CustomPallete
+                                color={bgLinksColor}
+                                onChange={setBgLinksColor}
+                            />
+                        </div>
+
+                        {/* Botão de adicionar */}
                         <div className="w-full flex">
-                            <button className="flex-1 bg-cyan-600 p-2 rounded-lg font-medium text-amber-50 cursor-pointer hover:bg-cyan-500">
+                            <button
+                                type="submit"
+                                className="flex-1 bg-cyan-600 p-2 rounded-lg font-medium text-amber-50 cursor-pointer hover:bg-cyan-500"
+                            >
                                 Adicionar
                             </button>
                         </div>
@@ -138,20 +262,40 @@ export default function AddLinks() {
                 </section>
             </div>
 
-            {/* preview */}
+            {/* Preview */}
             <div className="flex-1 flex-col gap-3 min-w-[450px] max-w-full">
                 <div className="flex my-5.5 items-center justify-start">
                     <h1 className="text-lg font-bold">
-                        Veja como esta ficando!
+                        Veja como está ficando!
                     </h1>
                 </div>
-                <section className="w-full border-1 p-5 rounded-lg ">
+                <section className="w-full border-1 p-5 rounded-lg">
                     <SkeletonPreviewLinks>
                         <DisplayLinks
-                            linkName="Meu canal do Youtube"
+                            linkName={linkName}
                             colorName="red"
-                            icon="Y"
-                            colorDisplay="blue"
+                            icon={
+                                selectedEmoji ? (
+                                    <DisplayIcons
+                                        size={24}
+                                        emoji={selectedEmoji}
+                                    />
+                                ) : selectedIcon ? (
+                                    <DisplayIcons
+                                        size={24}
+                                        icon={selectedIcon}
+                                        color={colorIcon}
+                                    />
+                                ) : domain && !hideIcon ? (
+                                    <img
+                                        src={`https://www.google.com/s2/favicons?domain=${domain}&sz=64`}
+                                        alt={domain}
+                                        width={24}
+                                        height={24}
+                                    />
+                                ) : null
+                            }
+                            backgrounColor={bgLinksColor}
                         />
                     </SkeletonPreviewLinks>
                 </section>

@@ -39,3 +39,11 @@ export interface TabNavigationProps {
     selectedTab: string;
     onTabSelect: (tabName: string) => void;
 }
+
+export interface ModalProps {
+    title?: string;
+    isOpen: boolean;
+    onClose: () => void;
+    children?: React.ReactNode;
+    saveData?: () => void;
+}
