@@ -4,9 +4,14 @@ import { ColorPicker } from "antd";
 interface CustomPalleteProps {
     color: string; // sempre string
     onChange: (color: string) => void;
+    size?: string;
 }
 
-export default function CustomPallete({ color, onChange }: CustomPalleteProps) {
+export default function CustomPallete({
+    color,
+    onChange,
+    size,
+}: CustomPalleteProps) {
     const handleChange: ColorPickerProps["onChange"] = (value) => {
         if (typeof value === "string") {
             onChange(value);
@@ -17,7 +22,11 @@ export default function CustomPallete({ color, onChange }: CustomPalleteProps) {
 
     return (
         <div>
-            <ColorPicker value={color} onChange={handleChange} size="large" />
+            <ColorPicker
+                value={color}
+                onChange={handleChange}
+                size={(size as "large" | "middle" | "small") || "large"}
+            />
         </div>
     );
 }

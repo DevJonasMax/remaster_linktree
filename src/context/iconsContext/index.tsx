@@ -3,9 +3,9 @@ import { createContext, useState, ReactNode, useContext } from "react";
 import * as Icons from "react-icons/fa";
 
 type IconContextProps = {
-    iconSelected: string;
+    iconSelected: string | null;
     colorIcon: string;
-    setIconSelected: (icon: string) => void;
+    setIconSelected: (icon: string | null) => void;
     setColorIcon: (colorIcon: string) => void;
     removeIcon: () => void;
 };
@@ -13,7 +13,7 @@ type IconContextProps = {
 const IconContext = createContext({} as IconContextProps);
 
 export function IconProvider({ children }: { children: ReactNode }) {
-    const [iconSelected, setIconSelected] = useState<string>("");
+    const [iconSelected, setIconSelected] = useState<string | null>("");
     const [colorIcon, setColorIcon] = useState<string>("");
     const removeIcon = () => {
         setIconSelected("");

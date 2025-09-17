@@ -2,6 +2,8 @@ import { useState } from "react";
 
 type SimplePaletteProps = {
     onSelectColor?: (color: string) => void;
+    sizePallete?: "default" | "small";
+    size?: string;
 };
 
 const colors = [
@@ -16,14 +18,24 @@ const colors = [
     "#D97706", // laranja (aviso)
     "#9333EA", // roxo (criativo)
 
-    "#F59E0B", // amarelo
+    "#ffdd00", // amarelo
     "#EC4899", // rosa
     "#06B6D4", // ciano
 ];
-
-export default function SimplePalette({ onSelectColor }: SimplePaletteProps) {
+const colorReduced = [
+    "#111827",
+    "#FFFFFF",
+    "#2563EB",
+    "#16A34A",
+    "#DC2626",
+    "#D97706",
+];
+export default function SimplePalette({
+    onSelectColor,
+    sizePallete = "default",
+    size = "30px",
+}: SimplePaletteProps) {
     const [selectedColor, setSelectedColor] = useState("");
-
     const handleSelectColor = (color: string) => {
         setSelectedColor(color);
         if (onSelectColor) {
@@ -32,20 +44,49 @@ export default function SimplePalette({ onSelectColor }: SimplePaletteProps) {
     };
 
     return (
-        <div className="grid grid-cols-6 grid-rows-2 gap-3">
-            {colors.map((color) => (
-                <div
-                    key={color}
-                    className={`w-7.5 h-7.5 rounded-lg border ${
-                        selectedColor === color
-                            ? "border-2 border-cyan-600"
-                            : ""
-                    } cursor-pointer`}
-                    style={{ backgroundColor: color }}
-                    onClick={() => handleSelectColor(color)}
-                    role="button"
-                ></div>
-            ))}
+        <div>
+            {sizePallete === "default" && (
+                <div className="grid grid-cols-6 grid-rows-2 gap-3">
+                    {colors.map((color) => (
+                        <div
+                            key={color}
+                            className={` rounded-lg border ${
+                                selectedColor === color
+                                    ? "border-1 border-cyan-600"
+                                    : "border-gray-600/60"
+                            } cursor-pointer`}
+                            style={{
+                                backgroundColor: color,
+                                width: size,
+                                height: size,
+                            }}
+                            onClick={() => handleSelectColor(color)}
+                            role="button"
+                        ></div>
+                    ))}
+                </div>
+            )}
+            {sizePallete === "small" && (
+                <div className="flex flex-row flex-wrap gap-3">
+                    {colorReduced.map((color) => (
+                        <div
+                            key={color}
+                            className={` rounded-lg border ${
+                                selectedColor === color
+                                    ? "border-1 border-cyan-600"
+                                    : "border-gray-600/60"
+                            } cursor-pointer`}
+                            style={{
+                                backgroundColor: color,
+                                width: size,
+                                height: size,
+                            }}
+                            onClick={() => handleSelectColor(color)}
+                            role="button"
+                        ></div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }

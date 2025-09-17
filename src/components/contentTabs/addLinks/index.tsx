@@ -1,26 +1,22 @@
 import Inputs from "@/components/inputs";
 import SimplePalette from "@/components/colorPalette/simplePalette";
-import SkeletonPreviewLinks from "@/components/skeleton/skeletonPreviewLinks";
 import DisplayLinks from "@/components/displayLinks";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import EmojisPikers from "@/components/emojisPikers";
 import { useState, useMemo } from "react";
 import { FaRainbow, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineClose } from "react-icons/md";
 import PaginationIcons from "@/components/pagination/paginationIcons";
+import DisplayIcons, { useIconContext } from "@/context/iconsContext";
+import { schema, formData } from "@/schema/formLinks.schema";
+import CustomPallete from "@/components/colorPalette/customPallete";
 
 interface EmojiClickData {
     emoji: string;
     unified: string;
     names: string[];
 }
-import DisplayIcons, { useIconContext } from "@/context/iconsContext";
-import { schema, formData } from "@/schema/formLinks.schema";
-import Modal from "@/components/modal";
-import CustomPallete from "@/components/colorPalette/customPallete";
-import { useColorContext } from "@/context/colorContext";
 
 export default function AddLinks() {
     const [openEmoji, setOpenEmoji] = useState<boolean>(false);
@@ -28,11 +24,16 @@ export default function AddLinks() {
     const [hideIcon, setHideIcon] = useState<boolean>(false);
 
     const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
-    const [selectedIcon, setSelectedIcon] = useState<string | null>(null);
+    const [colorNameLink, setColorNameLink] = useState<string>("#FFFFFF");
     const [bgLinksColor, setBgLinksColor] = useState<string>("#ba9b29");
 
-    const { colorIcon, removeIcon } = useIconContext();
-    const { colorSelected, handleSetColor } = useColorContext();
+    const {
+        colorIcon,
+        removeIcon,
+        setColorIcon,
+        iconSelected,
+        setIconSelected,
+    } = useIconContext();
 
     const {
         register,
@@ -79,7 +80,7 @@ export default function AddLinks() {
         };
         setValue("icon", emojiObj, { shouldValidate: true });
         setSelectedEmoji(emojiData.emoji);
-        setSelectedIcon(null);
+        setIconSelected(null);
         removeIcon();
     };
 
@@ -90,19 +91,29 @@ export default function AddLinks() {
             size: 24,
         };
         setValue("icon", iconObj, { shouldValidate: true });
-        setSelectedIcon(iconName);
+        setIconSelected(iconName);
         setSelectedEmoji(null);
     };
 
     const handleRemoveIcon = () => {
         setValue("icon", null, { shouldValidate: true });
         setSelectedEmoji(null);
-        setSelectedIcon(null);
+        setIconSelected(null);
         removeIcon();
     };
 
+    const handleSetColorIcon = (color: string) => {
+        setColorIcon(color);
+    };
+
     const onSubmit = (data: formData) => {
-        console.log(data);
+        const dataLinks = {
+            ...data,
+            colorName: colorNameLink,
+            bgColor: bgLinksColor,
+        };
+        alert("Adicionado com sucesso!");
+        console.log(dataLinks);
     };
 
     return (
@@ -138,7 +149,7 @@ export default function AddLinks() {
                             />
                         </div>
 
-                        {/* Nome */}
+                        {/* Nome do link */}
                         <div>
                             <label htmlFor="name">Nome do link</label>
                             <Inputs
@@ -152,102 +163,142 @@ export default function AddLinks() {
                                 error={errors.name?.message}
                             />
                         </div>
-
-                        {/* Ocultar ícone */}
-                        <div className="w-full flex items-center justify-end gap-4">
-                            <label
-                                htmlFor="hideDomainIcon"
-                                className="text-lg font-sans"
-                            >
-                                não mostrar ícone
-                            </label>
-                            <input
-                                type="checkbox"
-                                id="hideDomainIcon"
-                                checked={hideIcon}
-                                onChange={(e) => {
-                                    setHideIcon(e.target.checked);
-                                    handleClose();
-                                    handleRemoveIcon();
-                                }}
-                                className="w-5 h-5"
-                            />
-                        </div>
-
-                        {/* Botões de emoji e ícone */}
-                        <div className="w-full flex items-center justify-between">
-                            <div className="w-fit px-4 py-2 flex items-center gap-5 bg-gray-700/10 rounded-full">
-                                <div className="flex items-center gap-2">
-                                    <button
-                                        type="button"
-                                        className={`p-1 rounded-full bg-gray-700/10 cursor-pointer ${
-                                            hideIcon
-                                                ? "text-gray-400"
-                                                : "text-black"
-                                        }`}
-                                        onClick={handleOpenEmoji}
-                                        disabled={hideIcon}
-                                    >
-                                        &#x1F60A;
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className={`p-2 rounded-full bg-gray-700/10 cursor-pointer ${
-                                            hideIcon
-                                                ? "text-gray-400"
-                                                : "text-black"
-                                        }`}
-                                        onClick={handleOpenIcons}
-                                        disabled={hideIcon}
-                                    >
-                                        <FaRainbow size={20} />
-                                    </button>
+                        {linkName && url ? (
+                            <section>
+                                <div className="w-full flex flex-col gap-3 mt-2 mb-5">
+                                    <h2>Alterar cor do nome</h2>
+                                    <div className="w-full flex flex-row gap-10 items-center justify-between">
+                                        <SimplePalette
+                                            onSelectColor={setColorNameLink}
+                                            sizePallete="small"
+                                            size="24px"
+                                        />
+                                        <CustomPallete
+                                            color={colorNameLink}
+                                            onChange={setColorNameLink}
+                                            size="small"
+                                        />
+                                    </div>
                                 </div>
-                                {(openEmoji || openIcons) && (
-                                    <button
-                                        type="button"
-                                        className="p-2 rounded-full bg-gray-700/10 cursor-pointer text-black font-bold hover:bg-gray-700/30"
-                                        onClick={handleClose}
+
+                                {/* Ocultar ícone */}
+                                <div className="w-full flex items-center justify-end gap-4">
+                                    <label
+                                        htmlFor="hideDomainIcon"
+                                        className="text-lg font-sans"
                                     >
-                                        <MdOutlineClose size={20} />
-                                    </button>
+                                        não mostrar ícone
+                                    </label>
+                                    <input
+                                        type="checkbox"
+                                        id="hideDomainIcon"
+                                        checked={hideIcon}
+                                        onChange={(e) => {
+                                            setHideIcon(e.target.checked);
+                                            handleClose();
+                                            handleRemoveIcon();
+                                        }}
+                                        className="w-5 h-5"
+                                    />
+                                </div>
+
+                                {/* Botões de emoji e ícone */}
+                                <div className="w-full flex items-center justify-between">
+                                    <div className="w-fit px-4 py-2 flex items-center gap-5 bg-gray-400/8 rounded-full">
+                                        <div className="flex items-center gap-2">
+                                            <button
+                                                type="button"
+                                                className={`p-1 rounded-full bg-gray-700/10 cursor-pointer ${
+                                                    hideIcon
+                                                        ? "text-gray-400"
+                                                        : "text-black"
+                                                }`}
+                                                onClick={handleOpenEmoji}
+                                                disabled={hideIcon}
+                                            >
+                                                &#x1F60A;
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className={`p-2 rounded-full bg-gray-700/10 cursor-pointer ${
+                                                    hideIcon
+                                                        ? "text-gray-400"
+                                                        : "text-black"
+                                                }`}
+                                                onClick={handleOpenIcons}
+                                                disabled={hideIcon}
+                                            >
+                                                <FaRainbow size={20} />
+                                            </button>
+                                        </div>
+                                        {(openEmoji || openIcons) && (
+                                            <button
+                                                type="button"
+                                                className="p-2 rounded-full bg-gray-700/10 cursor-pointer text-black font-bold hover:bg-gray-700/30"
+                                                onClick={handleClose}
+                                            >
+                                                <MdOutlineClose size={20} />
+                                            </button>
+                                        )}
+                                    </div>
+
+                                    {(iconSelected || selectedEmoji) && (
+                                        <button
+                                            type="button"
+                                            onClick={handleRemoveIcon}
+                                            className="w-fit p-2 flex items-center justify-center gap-2 bg-gray-700/10 rounded-full cursor-pointer"
+                                        >
+                                            <FaTrashAlt />
+                                        </button>
+                                    )}
+                                </div>
+
+                                {/* Painel de seleção */}
+                                {openEmoji && (
+                                    <EmojisPikers
+                                        setEmoji={handleEmojiSelect}
+                                    />
                                 )}
-                            </div>
+                                {openIcons && (
+                                    <div>
+                                        <div className="w-full px-10 flex items-center justify-between gap-10">
+                                            <SimplePalette
+                                                sizePallete="small"
+                                                onSelectColor={
+                                                    handleSetColorIcon
+                                                }
+                                            />
+                                            <CustomPallete
+                                                color={colorIcon}
+                                                onChange={handleSetColorIcon}
+                                                size="middle"
+                                            />
+                                        </div>
+                                        <PaginationIcons
+                                            size={25}
+                                            onIconClick={handleIconSelect}
+                                        />
+                                    </div>
+                                )}
 
-                            {(selectedIcon || selectedEmoji) && (
-                                <button
-                                    type="button"
-                                    onClick={handleRemoveIcon}
-                                    className="w-fit p-2 flex items-center justify-center gap-2 bg-gray-700/10 rounded-full cursor-pointer"
-                                >
-                                    <FaTrashAlt />
-                                </button>
-                            )}
-                        </div>
+                                {/* Paleta e personalizar */}
+                                <div className="w-full  p-2 bg-gray-400/8 rounded-lg">
+                                    <h2 className="text-lg font-sans my-2">
+                                        Cor de fundo do link
+                                    </h2>
+                                    <div className="flex  justify-between mb-2">
+                                        <SimplePalette
+                                            onSelectColor={setBgLinksColor}
+                                        />
 
-                        {/* Painel de seleção */}
-                        {openEmoji && (
-                            <EmojisPikers setEmoji={handleEmojiSelect} />
-                        )}
-                        {openIcons && (
-                            <PaginationIcons
-                                size={25}
-                                onIconClick={handleIconSelect}
-                            />
-                        )}
-
-                        {/* Paleta e personalizar */}
-                        <h2 className="text-lg font-sans">
-                            Cor de fundo do link
-                        </h2>
-                        <div className="flex  justify-between">
-                            <SimplePalette onSelectColor={setBgLinksColor} />
-
-                            <CustomPallete
-                                color={bgLinksColor}
-                                onChange={setBgLinksColor}
-                            />
-                        </div>
+                                        <CustomPallete
+                                            color={bgLinksColor}
+                                            onChange={setBgLinksColor}
+                                        />
+                                    </div>
+                                </div>
+                            </section>
+                        ) : null}
 
                         {/* Botão de adicionar */}
                         <div className="w-full flex">
@@ -270,20 +321,20 @@ export default function AddLinks() {
                     </h1>
                 </div>
                 <section className="w-full border-1 p-5 rounded-lg">
-                    <SkeletonPreviewLinks>
+                    {linkName && url ? (
                         <DisplayLinks
                             linkName={linkName}
-                            colorName="red"
+                            colorName={colorNameLink}
                             icon={
                                 selectedEmoji ? (
                                     <DisplayIcons
                                         size={24}
                                         emoji={selectedEmoji}
                                     />
-                                ) : selectedIcon ? (
+                                ) : iconSelected ? (
                                     <DisplayIcons
                                         size={24}
-                                        icon={selectedIcon}
+                                        icon={iconSelected}
                                         color={colorIcon}
                                     />
                                 ) : domain && !hideIcon ? (
@@ -297,7 +348,11 @@ export default function AddLinks() {
                             }
                             backgrounColor={bgLinksColor}
                         />
-                    </SkeletonPreviewLinks>
+                    ) : (
+                        <p className="text-center text-gray-500">
+                            Adicione um link para ver a prévia
+                        </p>
+                    )}
                 </section>
             </div>
         </div>

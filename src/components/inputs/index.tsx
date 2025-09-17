@@ -22,7 +22,7 @@ export default function Inputs({
                 ${className || ""}`.trim()}
                 placeholder={props.placeholder}
             />
-            {error && <p>{error}</p>}
+            {error && <p className="text-red-400">{`*${error}`}</p>}
         </div>
     );
 }
