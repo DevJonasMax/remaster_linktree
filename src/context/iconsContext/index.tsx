@@ -14,18 +14,23 @@ const IconContext = createContext({} as IconContextProps);
 
 export function IconProvider({ children }: { children: ReactNode }) {
     const [iconSelected, setIconSelected] = useState<string | null>("");
-    const [colorIcon, setColorIcon] = useState<string>("");
+    const [colorIcon, setColorIcon] = useState<string>("#000000");
     const removeIcon = () => {
-        setIconSelected("");
-        setColorIcon("");
+        setIconSelected(null);
+        setColorIcon("#000000");
+        console.log("removeIcon");
     };
+    const handleSetColorIcon = (color: string) => {
+        setColorIcon(color);
+    };
+
     return (
         <IconContext.Provider
             value={{
                 iconSelected,
                 colorIcon,
                 setIconSelected,
-                setColorIcon,
+                setColorIcon: handleSetColorIcon,
                 removeIcon,
             }}
         >

@@ -11,12 +11,8 @@ import PaginationIcons from "@/components/pagination/paginationIcons";
 import DisplayIcons, { useIconContext } from "@/context/iconsContext";
 import { schema, formData } from "@/schema/formLinks.schema";
 import CustomPallete from "@/components/colorPalette/customPallete";
-
-interface EmojiClickData {
-    emoji: string;
-    unified: string;
-    names: string[];
-}
+import Button from "@/components/button";
+import { EmojiClickData } from "@/types";
 
 export default function AddLinks() {
     const [openEmoji, setOpenEmoji] = useState<boolean>(false);
@@ -72,6 +68,16 @@ export default function AddLinks() {
         setOpenIcons(false);
     };
 
+    const resetForm = () => {
+        setValue("url", "");
+        setValue("name", "");
+        setValue("icon", null);
+        setBgLinksColor("#ba9b29");
+        setColorNameLink("#FFFFFF");
+        setOpenIcons(false);
+        removeIcon();
+    };
+
     const handleEmojiSelect = (emojiData: EmojiClickData) => {
         const emojiObj = {
             emoji: emojiData.emoji,
@@ -87,7 +93,7 @@ export default function AddLinks() {
     const handleIconSelect = (iconName: string) => {
         const iconObj = {
             icon: iconName,
-            color: colorIcon || "#ba9b29",
+            color: colorIcon,
             size: 24,
         };
         setValue("icon", iconObj, { shouldValidate: true });
@@ -111,9 +117,11 @@ export default function AddLinks() {
             ...data,
             colorName: colorNameLink,
             bgColor: bgLinksColor,
+            hideIcon: hideIcon,
         };
         alert("Adicionado com sucesso!");
         console.log(dataLinks);
+        resetForm();
     };
 
     return (
@@ -302,12 +310,7 @@ export default function AddLinks() {
 
                         {/* Botão de adicionar */}
                         <div className="w-full flex">
-                            <button
-                                type="submit"
-                                className="flex-1 bg-cyan-600 p-2 rounded-lg font-medium text-amber-50 cursor-pointer hover:bg-cyan-500"
-                            >
-                                Adicionar
-                            </button>
+                            <Button type="submit">Adicionar</Button>
                         </div>
                     </form>
                 </section>

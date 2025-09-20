@@ -47,3 +47,8 @@ export interface ModalProps {
     children?: React.ReactNode;
     saveData?: () => void;
 }
+interface EmojiClickData {
+    emoji: string;
+    unified: string;
+    names: string[];
+}
