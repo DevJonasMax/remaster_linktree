@@ -191,6 +191,7 @@ export default function ListLinks() {
                             mode="edit"
                             textButton="Salvar"
                             onChange={handleLiveUpdate}
+                            dasableButton={unsavedChanges}
                         />
                     ) : (
                         <div className="w-full flex-1 items-center justify-center py-2 px-1">

@@ -12,6 +12,7 @@ import PaginationIcons from "@/components/pagination/paginationIcons";
 import { FaRainbow, FaTrashAlt } from "react-icons/fa";
 import { MdOutlineClose } from "react-icons/md";
 import Button from "@/components/button";
+import { UseFormReturn } from "react-hook-form";
 
 type LinkFormProps = {
     onSubmit: (data: formData) => void;
@@ -19,6 +20,8 @@ type LinkFormProps = {
     mode: "create" | "edit";
     textButton: string;
     onChange?: (data: formData) => void;
+    dasableButton?: boolean;
+    form?: UseFormReturn<formData>;
 };
 
 export default function Form({
@@ -27,6 +30,8 @@ export default function Form({
     mode,
     textButton = "Adicionar",
     onChange,
+    dasableButton = false,
+    form,
 }: LinkFormProps) {
     const {
         colorIcon,
@@ -40,6 +45,24 @@ export default function Form({
     const [openIcons, setOpenIcons] = useState<boolean>(false);
     const [openEmoji, setOpenEmoji] = useState<boolean>(false);
 
+    // const {
+    //     register,
+    //     handleSubmit,
+    //     setValue,
+    //     watch,
+    //     reset,
+    //     formState: { errors },
+    // } = useForm<formData>({
+    //     resolver: zodResolver(schema),
+    //     mode: "onChange",
+    //     defaultValues,
+    // });
+    const internalForm = useForm<formData>({
+        resolver: zodResolver(schema),
+        mode: "onChange",
+        defaultValues,
+    });
+
     const {
         register,
         handleSubmit,
@@ -47,11 +70,8 @@ export default function Form({
         watch,
         reset,
         formState: { errors },
-    } = useForm<formData>({
-        resolver: zodResolver(schema),
-        mode: "onChange",
-        defaultValues,
-    });
+    } = form ?? internalForm;
+
     const values = watch();
 
     useEffect(() => {
@@ -70,14 +90,6 @@ export default function Form({
 
     const linkName = watch("name");
     const url = watch("url");
-
-    // const domain = useMemo(() => {
-    //     try {
-    //         return url ? new URL(url).hostname.replace("www.", "") : null;
-    //     } catch {
-    //         return null;
-    //     }
-    // }, [url]);
 
     const handleEmojiSelect = (emojiData: EmojiClickData) => {
         const emojiObj = {
@@ -302,7 +314,9 @@ export default function Form({
 
             {/* Botão de adicionar */}
             <div className="w-full flex">
-                <Button type="submit">{textButton}</Button>
+                <Button type="submit" disabled={dasableButton}>
+                    {textButton}
+                </Button>
             </div>
         </form>
     );
