@@ -34,6 +34,9 @@ export const schema = z.object({
             z.null(), // permite null
         ])
         .optional(),
+    colorName: z.string(),
+    bgColor: z.string(),
+    hideIcon: z.boolean().optional(),
 });
 
 export type formData = z.infer<typeof schema>;

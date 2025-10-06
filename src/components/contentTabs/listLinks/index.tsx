@@ -1,17 +1,15 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import DisplayLinks from "@/components/displayLinks";
 import DisplayIcons from "@/context/iconsContext";
 import { CiEdit } from "react-icons/ci";
 import { SkeletonLinksRealTime } from "@/components/skeleton/skeletonLinks";
-import Button from "@/components/button";
 import { schema, formData } from "@/schema/formLinks.schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-
+import Form from "@/components/forms/form";
 
 const exemploLinks = [
     {
+        id: 1,
         url: "https://www.npmjs.com/package/emoji-picker-react",
         name: "teste 01",
         colorName: "#2563EB",
@@ -19,6 +17,7 @@ const exemploLinks = [
         hideIcon: false,
     },
     {
+        id: 2,
         url: "https://fontawesome.com/search?q=close&ic=free&o=r",
         name: "teste 02",
         icon: {
@@ -31,6 +30,7 @@ const exemploLinks = [
         hideIcon: false,
     },
     {
+        id: 3,
         url: "https://www.youtube.com/results?search_query=mask+figma",
         name: "teste 03",
         icon: {
@@ -43,6 +43,7 @@ const exemploLinks = [
         hideIcon: false,
     },
     {
+        id: 4,
         url: "https://www.npmjs.com/package/emoji-picker-react",
         name: "teste 04",
         icon: null,
@@ -53,38 +54,76 @@ const exemploLinks = [
 ];
 
 export default function ListLinks() {
+    const [links, setLinks] = useState<any[]>(exemploLinks);
     const [selectedLink, setSelectedLink] = useState<any | null>(null);
+    const [unsavedChanges, setUnsavedChanges] = useState(false);
+    const [originalLink, setOriginalLink] = useState<any | null>(null);
 
-    // estados do formulário
-    const [url, setUrl] = useState("");
-    const [name, setName] = useState("");
-    const [colorName, setColorName] = useState("");
-    const [bgColor, setBgColor] = useState("");
+    const handleLiveUpdate = (updatedData: formData) => {
+        if (!selectedLink) return;
 
-    // quando trocar link, popular o formulário
-    useEffect(() => {
-        if (selectedLink) {
-            setUrl(selectedLink.url || "");
-            setName(selectedLink.name || "");
-            setColorName(selectedLink.colorName || "");
-            setBgColor(selectedLink.bgColor || "");
+        const hasChanged =
+            JSON.stringify(selectedLink) !== JSON.stringify(updatedData);
+        if (!hasChanged) return;
+
+        setLinks((prevLinks) =>
+            prevLinks.map((link) =>
+                link.id === selectedLink.id ? { ...link, ...updatedData } : link
+            )
+        );
+
+        setSelectedLink((prev: any) =>
+            prev ? { ...prev, ...updatedData } : prev
+        );
+
+        setUnsavedChanges(true);
+    };
+
+    const handleSubmit = (data: formData) => {
+        if (!selectedLink) return;
+
+        const currentWithId = { ...selectedLink, ...data };
+        if (JSON.stringify(currentWithId) === JSON.stringify(originalLink)) {
+            return;
         }
-    }, [selectedLink]);
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
+        setLinks((prevLinks) =>
+            prevLinks.map((link) =>
+                link.id === selectedLink.id ? { ...link, ...data } : link
+            )
+        );
 
-        const updatedLink = {
-            ...selectedLink,
-            url,
-            name,
-            colorName,
-            bgColor,
-        };
+        setSelectedLink((prev: any) => (prev ? { ...prev, ...data } : prev));
+        setOriginalLink({ ...currentWithId }); // Atualiza o original
+        setUnsavedChanges(false);
 
-        console.log("Salvando link atualizado:", updatedLink);
+        console.log("Salvando link atualizado no banco:", data);
+    };
 
-        // aqui você poderia atualizar seu estado global / fazer requisição API
+    // Seleciona um item e trata alterações não salvas
+    const handleSelectLink = (link: any) => {
+        if (unsavedChanges && originalLink) {
+            const confirmSave = window.confirm(
+                "Você tem alterações não salvas. Deseja salvar antes de mudar de item?"
+            );
+
+            if (confirmSave) {
+                handleSubmit(selectedLink); // salva somente se houver alteração
+            } else {
+                // descarta alterações
+                setLinks((prev) =>
+                    prev.map((l) =>
+                        l.id === selectedLink?.id ? { ...originalLink } : l
+                    )
+                );
+                setSelectedLink({ ...originalLink }); // restaura o formulário
+            }
+        }
+
+        // Define o novo item selecionado
+        setSelectedLink(link);
+        setOriginalLink({ ...link }); // cópia do original
+        setUnsavedChanges(false);
     };
 
     return (
@@ -97,15 +136,15 @@ export default function ListLinks() {
                 {/* LISTA DE LINKS */}
                 <div className="max-w-[300px] w-full flex flex-col flex-wrap gap-5">
                     <SkeletonLinksRealTime>
-                        {exemploLinks.map((link: any) => (
+                        {links.map((link: any) => (
                             <button
-                                key={link.name}
+                                key={link.id}
                                 className={`relative w-full flex items-center justify-center rounded-2xl p-1 cursor-pointer ${
-                                    selectedLink?.name === link.name
+                                    selectedLink?.id === link.id
                                         ? "bg-[#98E3E3]/60"
                                         : "bg-transparent"
                                 }`}
-                                onClick={() => setSelectedLink(link)}
+                                onClick={() => handleSelectLink(link)}
                             >
                                 <DisplayLinks
                                     linkName={link.name}
@@ -146,65 +185,13 @@ export default function ListLinks() {
                     </div>
 
                     {selectedLink ? (
-                        <form
+                        <Form
                             onSubmit={handleSubmit}
-                            className="w-full flex flex-col gap-5 p-2"
-                        >
-                            <div>
-                                <label className="block text-sm mb-1">
-                                    Nome
-                                </label>
-                                <input
-                                    type="text"
-                                    value={name}
-                                    onChange={(e) => setName(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-sm mb-1">
-                                    URL
-                                </label>
-                                <input
-                                    type="text"
-                                    value={url}
-                                    onChange={(e) => setUrl(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded"
-                                />
-                            </div>
-
-                            <div className="flex gap-5">
-                                <div>
-                                    <label className="block text-sm mb-1">
-                                        Cor Nome
-                                    </label>
-                                    <input
-                                        type="color"
-                                        value={colorName}
-                                        onChange={(e) =>
-                                            setColorName(e.target.value)
-                                        }
-                                        className="w-12 h-10"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-sm mb-1">
-                                        Cor Fundo
-                                    </label>
-                                    <input
-                                        type="color"
-                                        value={bgColor}
-                                        onChange={(e) =>
-                                            setBgColor(e.target.value)
-                                        }
-                                        className="w-12 h-10"
-                                    />
-                                </div>
-                            </div>
-
-                            <Button type="submit">Salvar</Button>
-                        </form>
+                            defaultValues={selectedLink}
+                            mode="edit"
+                            textButton="Salvar"
+                            onChange={handleLiveUpdate}
+                        />
                     ) : (
                         <div className="w-full flex-1 items-center justify-center py-2 px-1">
                             <div className="w-full h-full flex items-center justify-center bg-neutral-600/20 rounded-lg">
