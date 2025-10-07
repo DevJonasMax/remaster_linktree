@@ -19,8 +19,12 @@ export default function Button({
         <button
             type={type}
             disabled={disabled}
-            className={`flex-1 bg-cyan-600 p-2 rounded-lg font-medium text-amber-50 cursor-pointer hover:bg-cyan-500
+            className={`flex-1 bg-cyan-600 p-2 rounded-lg font-medium text-amber-50 cursor-pointer 
+                        ${disabled ? "none" : "hover:bg-cyan-500"}
                         ${className}`}
+            style={{
+                cursor: disabled ? "not-allowed" : "pointer",
+            }}
             name={name}
         >
             {text || children}

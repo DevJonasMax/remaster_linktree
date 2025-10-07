@@ -20,7 +20,7 @@ type LinkFormProps = {
     mode: "create" | "edit";
     textButton: string;
     onChange?: (data: formData) => void;
-    dasableButton?: boolean;
+    disabledButton?: boolean;
     form?: UseFormReturn<formData>;
 };
 
@@ -30,7 +30,7 @@ export default function Form({
     mode,
     textButton = "Adicionar",
     onChange,
-    dasableButton = false,
+    disabledButton,
     form,
 }: LinkFormProps) {
     const {
@@ -40,23 +40,11 @@ export default function Form({
         iconSelected,
         setIconSelected,
     } = useIconContext();
-    const [hideIcon, setHideIcon] = useState<boolean>(false);
+
     const [selectedEmoji, setSelectedEmoji] = useState<string | null>(null);
     const [openIcons, setOpenIcons] = useState<boolean>(false);
     const [openEmoji, setOpenEmoji] = useState<boolean>(false);
 
-    // const {
-    //     register,
-    //     handleSubmit,
-    //     setValue,
-    //     watch,
-    //     reset,
-    //     formState: { errors },
-    // } = useForm<formData>({
-    //     resolver: zodResolver(schema),
-    //     mode: "onChange",
-    //     defaultValues,
-    // });
     const internalForm = useForm<formData>({
         resolver: zodResolver(schema),
         mode: "onChange",
@@ -69,7 +57,7 @@ export default function Form({
         setValue,
         watch,
         reset,
-        formState: { errors },
+        formState: { errors, isDirty },
     } = form ?? internalForm;
 
     const values = watch();
@@ -225,24 +213,24 @@ export default function Form({
                                 <button
                                     type="button"
                                     className={`p-1 rounded-full bg-gray-700/10  ${
-                                        hideIcon
+                                        watch("hideIcon")
                                             ? "text-gray-400/60"
                                             : "text-black cursor-pointer"
                                     }`}
                                     onClick={handleOpenEmoji}
-                                    disabled={hideIcon}
+                                    disabled={watch("hideIcon")}
                                 >
                                     &#x1F60A;
                                 </button>
                                 <button
                                     type="button"
                                     className={`p-2 rounded-full bg-gray-700/10 ${
-                                        hideIcon
+                                        watch("hideIcon")
                                             ? "text-gray-400"
                                             : "text-black cursor-pointer"
                                     }`}
                                     onClick={handleOpenIcons}
-                                    disabled={hideIcon}
+                                    disabled={watch("hideIcon")}
                                 >
                                     <FaRainbow size={20} />
                                 </button>
@@ -314,7 +302,7 @@ export default function Form({
 
             {/* Botão de adicionar */}
             <div className="w-full flex">
-                <Button type="submit" disabled={dasableButton}>
+                <Button type="submit" disabled={disabledButton}>
                     {textButton}
                 </Button>
             </div>
