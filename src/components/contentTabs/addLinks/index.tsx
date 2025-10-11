@@ -3,13 +3,21 @@ import DisplayLinks from "@/components/displayLinks";
 import DisplayIcons, { useIconContext } from "@/context/iconsContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { schema, formData } from "@/schema/formLinks.schema";
 import Form from "@/components/forms/form";
 
-export default function AddLinks() {
-    const { colorIcon, iconSelected } = useIconContext();
+import { UserServices } from "@/services/userServices";
 
+export default function AddLinks() {
+    const {
+        colorIcon,
+        iconSelected,
+        setIconSelected,
+        setColorIcon,
+        removeIcon,
+    } = useIconContext();
+    const userServices = useMemo(() => new UserServices(), []);
     const form = useForm<formData>({
         resolver: zodResolver(schema),
         mode: "onChange",
@@ -22,6 +30,13 @@ export default function AddLinks() {
             hideIcon: false,
         },
     });
+
+    useEffect(() => {
+        if (iconSelected) {
+            setIconSelected("");
+            setColorIcon("#000000");
+        }
+    }, []);
 
     const { watch, reset } = form;
     const linkName = watch("name");
@@ -37,7 +52,19 @@ export default function AddLinks() {
     }, [url]);
 
     const onSubmit = (data: formData) => {
+        // const uid = uuidv4();
+        const uid = "4f02c665-c8cb-4bce-9794-f32861873abd";
+        userServices
+            .addUserLinks(uid, data)
+            .then(() => {
+                console.log("Novo link criado:", data);
+            })
+            .catch((error: any) => {
+                console.error("Erro ao criar link:", error);
+            });
+
         console.log("Novo link criado:", data);
+        removeIcon();
         reset();
     };
 

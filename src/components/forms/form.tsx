@@ -57,7 +57,7 @@ export default function Form({
         setValue,
         watch,
         reset,
-        formState: { errors, isDirty },
+        formState: { errors },
     } = form ?? internalForm;
 
     const values = watch();
@@ -183,15 +183,11 @@ export default function Form({
                             />
                         </div>
                     </div>
+                    <hr className="my-3 border-gray-400/30" />
 
-                    {/* Ocultar ícone */}
-                    <div className="w-full flex items-center justify-end gap-4">
-                        <label
-                            htmlFor="hideDomainIcon"
-                            className="text-lg font-sans"
-                        >
-                            não mostrar ícone
-                        </label>
+                    {/* Btn Ocultar ícone */}
+
+                    <div className="w-full flex items-center justify-start gap-4">
                         <input
                             type="checkbox"
                             id="hideDomainIcon"
@@ -204,8 +200,14 @@ export default function Form({
                             }}
                             className="w-5 h-5"
                         />
+                        <label
+                            htmlFor="hideDomainIcon"
+                            className="text-lg font-sans"
+                        >
+                            ocultar ícone
+                        </label>
                     </div>
-
+                    <hr className="my-4 border-gray-400/30" />
                     {/* Botões de emoji e ícone */}
                     <div className="w-full flex items-center justify-between">
                         <div className="w-fit px-4 py-2 flex items-center gap-5 bg-gray-400/8 rounded-full">
@@ -257,29 +259,30 @@ export default function Form({
                         )}
                     </div>
 
-                    {/* Painel de seleção */}
+                    {/* Painel de seleção de icones*/}
                     {openEmoji && <EmojisPikers setEmoji={handleEmojiSelect} />}
                     {openIcons && (
                         <div>
-                            <div className="w-full px-10 flex items-center justify-between gap-10">
+                            <PaginationIcons
+                                size={25}
+                                onIconClick={handleIconSelect}
+                            />
+                            <div className="w-full px-10 flex items-center justify-between gap-10 mt-5 mb-3">
                                 <SimplePalette
                                     sizePallete="small"
                                     onSelectColor={handleSetColorIcon}
                                 />
                                 <CustomPallete
                                     color={colorIcon}
-                                    onChange={handleSetColorIcon}
+                                    onChange={setColorIcon}
                                     size="middle"
                                 />
                             </div>
-                            <PaginationIcons
-                                size={25}
-                                onIconClick={handleIconSelect}
-                            />
                         </div>
                     )}
+                    <hr className="my-4 border-gray-400/30" />
 
-                    {/* Paleta e personalizar */}
+                    {/* Paleta de cores de fundo do link */}
                     <div className="w-full  p-2 bg-gray-400/8 rounded-lg">
                         <h2 className="text-lg font-sans my-2">
                             Cor de fundo do link

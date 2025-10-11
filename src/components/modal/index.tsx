@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react"; // useState pode não ser necessário aqui se o pai controla tudo
+import React, { useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import type { ModalProps } from "@/types";
 
@@ -8,11 +9,14 @@ export default function Modal({
     onClose,
     saveData,
     title,
+    textBtnRight = "Salvar",
+    textBtnLeft = "Cancelar",
+    emphasis = "right",
+    bgColorBtnRight = "blue",
+    bgColorBtnLeft = "gray",
 }: ModalProps) {
-    if (!isOpen) {
-        return null;
-    }
     const modalRef = useRef<HTMLDivElement | null>(null);
+
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
             if (
@@ -26,37 +30,76 @@ export default function Modal({
         if (isOpen) {
             document.addEventListener("mousedown", handleClickOutside);
         }
-
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [isOpen, onClose]);
 
+    const colorClasses: Record<string, string> = {
+        blue: "bg-blue-700 hover:bg-blue-600 border-blue-800",
+        red: "bg-red-700 hover:bg-red-600 border-red-800",
+        green: "bg-green-700 hover:bg-green-600 border-green-800",
+        gray: "bg-gray-700 hover:bg-gray-600 border-gray-800",
+        zinc: "bg-zinc-700 hover:bg-zinc-600 border-zinc-800",
+    };
+
     return (
-        <div className="fixed p-2 inset-0 flex flex-col justify-center items-center bg-zinc-200 dark:bg-neutral-800/98 bg-opacity-70 z-50 ">
-            <div
-                ref={modalRef}
-                className="inset-shadow-2xs p-6 rounded-lg shadow-xl w-full max-w-xl dark:border dark:bg-neutral-800 max-h-[100vh] overflow-y-auto sm:max-h-[100vh]"
-            >
-                <h1 className="text-xl text-neutral-800 dark:text-gray-100 font-medium mb-4 pl-5">
-                    {title}
-                </h1>
-                {children}
-                <div className="mt-4 flex justify-end space-x-2">
-                    <button
-                        onClick={onClose}
-                        className="cursor-pointer px-4 py-2 bg-zinc-700 text-gray-100 rounded hover:bg-zinc-600 border border-gray-600"
+        <AnimatePresence>
+            {isOpen && (
+                <motion.div
+                    key="modal-backdrop"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm z-50 p-4"
+                >
+                    <motion.div
+                        ref={modalRef}
+                        key="modal-content"
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        transition={{ duration: 0.2 }}
+                        className="bg-white dark:bg-neutral-900 rounded-2xl shadow-2xl w-full max-w-lg p-6 border dark:border-neutral-700"
                     >
-                        Cancelar
-                    </button>
-                    <button
-                        onClick={saveData}
-                        className="cursor-pointer  px-4 py-2 bg-blue-800 text-gray-100 rounded hover:bg-blue-600 border border-blue-900"
-                    >
-                        Salvar
-                    </button>
-                </div>
-            </div>
-        </div>
+                        {title && (
+                            <h1 className="text-xl font-semibold mb-4 text-neutral-800 dark:text-gray-100">
+                                {title}
+                            </h1>
+                        )}
+
+                        <div className="text-neutral-700 dark:text-gray-200">
+                            {children}
+                        </div>
+
+                        <div className="mt-6 flex justify-end gap-3">
+                            <button
+                                onClick={onClose}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium border text-gray-100 transition-colors ${
+                                    emphasis === "left"
+                                        ? colorClasses[bgColorBtnLeft] ||
+                                          colorClasses.gray
+                                        : "bg-gray-600 hover:bg-gray-500 border-gray-700"
+                                }`}
+                            >
+                                {textBtnLeft}
+                            </button>
+
+                            <button
+                                onClick={saveData}
+                                className={`px-4 py-2 rounded-lg text-sm font-medium border text-gray-100 transition-colors ${
+                                    emphasis === "right"
+                                        ? colorClasses[bgColorBtnRight] ||
+                                          colorClasses.blue
+                                        : "bg-gray-600 hover:bg-gray-500 border-gray-700"
+                                }`}
+                            >
+                                {textBtnRight}
+                            </button>
+                        </div>
+                    </motion.div>
+                </motion.div>
+            )}
+        </AnimatePresence>
     );
 }

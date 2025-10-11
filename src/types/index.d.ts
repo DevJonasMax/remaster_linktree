@@ -41,11 +41,16 @@ export interface TabNavigationProps {
 }
 
 export interface ModalProps {
-    title?: string;
+    children?: React.ReactNode;
     isOpen: boolean;
     onClose: () => void;
-    children?: React.ReactNode;
     saveData?: () => void;
+    title?: string;
+    textBtnRight?: string;
+    textBtnLeft?: string;
+    emphasis?: "right" | "left";
+    bgColorBtnRight?: string;
+    bgColorBtnLeft?: string;
 }
 interface EmojiClickData {
     emoji: string;

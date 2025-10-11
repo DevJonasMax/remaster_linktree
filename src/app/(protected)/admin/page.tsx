@@ -32,7 +32,7 @@ export default function AdminPage() {
 
     return (
         <div className="flex w-full h-full mt-10 gap-5">
-            <div className="w-15 h-full flex flex-col items-center gap-3 mt-18 rounded-lg">
+            <div className="w-15 h-full flex flex-col items-center gap-3 mt-18 rounded-lg z-30">
                 <TabNavigation
                     tabs={tabs}
                     selectedTab={selectedTab}

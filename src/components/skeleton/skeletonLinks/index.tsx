@@ -11,7 +11,7 @@ export function SkeletonLinksRealTime({
     const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
-        const id = setTimeout(() => setLoaded(true), 3000);
+        const id = setTimeout(() => setLoaded(true), 1000);
         return () => clearTimeout(id);
     }, []);
 
