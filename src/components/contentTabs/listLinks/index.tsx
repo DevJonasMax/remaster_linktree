@@ -88,9 +88,6 @@ export default function ListLinks() {
                 console.error("Erro ao obter links:", error);
             });
     }, []);
-    useEffect(() => {
-        console.log("Links:", links.length > 0 ? "há links" : "não há links");
-    }, [links]);
 
     const handleLiveUpdate = (updatedData: formData) => {
         if (!selectedLink) return;
@@ -212,10 +209,10 @@ export default function ListLinks() {
                 <h2 className="text-2xl font-bold">Links cadastrados</h2>
             </div>
 
-            <section className="p-5 flex border-1 border-neutral-600 rounded-lg flex-wrap gap-5">
+            <section className="p-5 flex border-1 border-neutral-600/20 rounded-lg flex-wrap gap-5">
                 {/* LISTA DE LINKS */}
                 {links.length > 0 ? (
-                    <div className="w-full p-5 flex border-1 border-neutral-600 rounded-lg flex-wrap gap-5 ">
+                    <div className="w-full p-5 flex border-1 border-neutral-600/20 rounded-lg flex-wrap gap-5 ">
                         <div className="max-w-[300px] w-full flex flex-col flex-wrap gap-5">
                             <SkeletonLinksRealTime>
                                 {links.map((link: any) => (
@@ -265,7 +262,7 @@ export default function ListLinks() {
                             </SkeletonLinksRealTime>
                         </div>
                         {/* FORMULÁRIO */}
-                        <div className="p-5 flex-1 flex flex-col border-1 border-neutral-600 rounded-lg">
+                        <div className="p-5 flex-1 flex flex-col border-1 border-neutral-600/20 rounded-lg">
                             <div className="w-full flex items-center justify-between mb-2">
                                 <h2 className="text-2xl font-bold">
                                     Editar Link

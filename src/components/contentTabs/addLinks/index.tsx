@@ -76,7 +76,7 @@ export default function AddLinks() {
                     <h1 className="text-2xl font-bold">Adicione seus links</h1>
                 </div>
 
-                <section className="flex flex-col border-1 pt-10 pb-5 px-5 gap-5 rounded-lg">
+                <section className="flex flex-col border-1 border-neutral-600/20 pt-10 pb-5 px-5 gap-5 rounded-lg">
                     <Form
                         form={form}
                         mode="create"
@@ -94,7 +94,7 @@ export default function AddLinks() {
                     </h1>
                 </div>
 
-                <section className="w-full border-1 p-5 rounded-lg">
+                <section className="w-full border-1 border-neutral-600/20 p-5 rounded-lg">
                     {linkName && url ? (
                         <DisplayLinks
                             linkName={linkName}
