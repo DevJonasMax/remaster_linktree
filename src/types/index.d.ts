@@ -25,7 +25,7 @@ export interface InputProps
     width?: string;
     className?: string;
     placeholder?: string;
-    register: UseFormRegister<any>;
+    register?: UseFormRegister<any>;
     name: string;
     rules?: RegisterOptions;
 }
@@ -51,6 +51,8 @@ export interface ModalProps {
     emphasis?: "right" | "left";
     bgColorBtnRight?: string;
     bgColorBtnLeft?: string;
+    typeButton?: "submit" | "button";
+    idForm?: string;
 }
 interface EmojiClickData {
     emoji: string;

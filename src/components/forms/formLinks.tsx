@@ -24,7 +24,7 @@ type LinkFormProps = {
     form?: UseFormReturn<formData>;
 };
 
-export default function Form({
+export default function FormLinks({
     onSubmit,
     defaultValues,
     mode,
@@ -75,16 +75,25 @@ export default function Form({
             reset(defaultValues);
         }
     }, [mode, defaultValues, reset]);
+    useEffect(() => {
+        if (iconSelected) {
+            setValue("icon.color", colorIcon, {
+                shouldValidate: true,
+                shouldDirty: true,
+            });
+        }
+    }, [colorIcon, iconSelected, setValue]);
 
     const linkName = watch("name");
     const url = watch("url");
 
     const handleEmojiSelect = (emojiData: EmojiClickData) => {
         const emojiObj = {
+            type: "emoji",
             emoji: emojiData.emoji,
             unicode: emojiData.unified,
             name: emojiData.names[0],
-        };
+        } as const;
         setValue("icon", emojiObj, { shouldValidate: true });
         setSelectedEmoji(emojiData.emoji);
         setIconSelected(null);
@@ -92,7 +101,12 @@ export default function Form({
     };
 
     const handleIconSelect = (iconName: string) => {
-        const iconObj = { icon: iconName, color: colorIcon, size: 24 };
+        const iconObj = {
+            type: "icon",
+            icon: iconName,
+            color: colorIcon,
+            size: 24,
+        } as const;
         setValue("icon", iconObj, { shouldValidate: true });
         setIconSelected(iconName);
         setSelectedEmoji(null);
@@ -118,7 +132,13 @@ export default function Form({
         setOpenIcons(!openIcons);
     };
 
-    const handleSetColorIcon = (color: string) => setColorIcon(color);
+    const handleSetColorIcon = (color: string) => {
+        setColorIcon(color);
+        setValue("icon.color", color, {
+            shouldValidate: true,
+            shouldDirty: true,
+        });
+    };
     const handleOnSubmit = (data: formData) => {
         onSubmit(data);
     };

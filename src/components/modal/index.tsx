@@ -14,6 +14,8 @@ export default function Modal({
     emphasis = "right",
     bgColorBtnRight = "blue",
     bgColorBtnLeft = "gray",
+    typeButton = "submit",
+    idForm,
 }: ModalProps) {
     const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -86,6 +88,8 @@ export default function Modal({
                             </button>
 
                             <button
+                                form={idForm}
+                                type={typeButton}
                                 onClick={saveData}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium border text-gray-100 transition-colors ${
                                     emphasis === "right"

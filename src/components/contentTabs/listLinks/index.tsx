@@ -7,7 +7,7 @@ import { CiEdit } from "react-icons/ci";
 import { FaTrashAlt } from "react-icons/fa";
 import { SkeletonLinksRealTime } from "@/components/skeleton/skeletonLinks";
 import { formData } from "@/schema/formLinks.schema";
-import Form from "@/components/forms/form";
+import FormLinks from "@/components/forms/formLinks";
 import { UserServices } from "@/services/userServices";
 import Modal from "@/components/modal";
 
@@ -72,14 +72,8 @@ export default function ListLinks() {
         userServices
             .getUserLinks(UId)
             .then((userData) => {
-                console.log(
-                    "Tipo de dado retornado:",
-                    typeof userData,
-                    userData
-                );
                 if (userData) {
                     setLinks(userData.data as formData[]);
-                    console.log("userData:", userData.data);
                 } else {
                     setLinks([]);
                 }
@@ -110,7 +104,7 @@ export default function ListLinks() {
     };
 
     // Seleciona um item e trata alterações não salvas
-    const handleSelectLink = (link: any) => {
+    const handleSelectLink = (link: { id: number } & formData) => {
         if (unsavedChanges && originalLink) {
             const confirmSave = window.confirm(
                 "Você tem alterações não salvas. Deseja salvar antes de mudar de item?"
@@ -130,8 +124,16 @@ export default function ListLinks() {
         }
 
         // Define o novo item selecionado
+        if (link.icon?.type === "icon") {
+            setIconSelected(link.icon.icon);
+            setColorIcon(link.icon.color || "");
+        } else {
+            setIconSelected("");
+            setColorIcon("");
+        }
         setSelectedLink(link);
         setOriginalLink({ ...link }); // cópia do original
+
         setUnsavedChanges(false);
     };
 
@@ -270,7 +272,7 @@ export default function ListLinks() {
                                 <CiEdit className=" text-black text-[25px]" />
                             </div>
                             {selectedLink ? (
-                                <Form
+                                <FormLinks
                                     onSubmit={handleSubmit}
                                     defaultValues={selectedLink}
                                     mode="edit"

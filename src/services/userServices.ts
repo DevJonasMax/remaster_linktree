@@ -9,6 +9,7 @@ import {
     onSnapshot,
     updateDoc,
     deleteDoc,
+    setDoc,
 } from "firebase/firestore";
 import { formData } from "@/schema/formLinks.schema";
 import { db } from "@/lib/firebaseAuth";
@@ -97,14 +98,31 @@ export class UserServices {
     ): Promise<{ success: boolean; error?: string }> {
         try {
             const linkRef = doc(db, "users", uid, "links", linkId);
+
+            // Tenta atualizar primeiro
             await updateDoc(linkRef, data);
+            console.log("Documento atualizado com sucesso!");
             return { success: true };
-        } catch (error: unknown) {
+        } catch (error: any) {
+            // Se o documento não existir, cria um novo
+            if (
+                error.code === "not-found" ||
+                error.message?.includes("No document to update")
+            ) {
+                try {
+                    const linkRef = doc(db, "users", uid, "links", linkId);
+                    await setDoc(linkRef, data);
+                    console.log("Documento criado com sucesso!");
+                    return { success: true };
+                } catch (setError: any) {
+                    console.error("Erro ao criar documento:", setError);
+                    return { success: false, error: setError.message };
+                }
+            }
+
+            // Outro erro (ex: permissão, rede, etc)
             console.error("Erro ao atualizar link:", error);
-            return {
-                success: false,
-                error: error instanceof Error ? error.message : String(error),
-            };
+            return { success: false, error: error.message };
         }
     }
 

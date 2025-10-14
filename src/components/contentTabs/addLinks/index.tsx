@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useMemo } from "react";
 import { schema, formData } from "@/schema/formLinks.schema";
-import Form from "@/components/forms/form";
+import FormLinks from "@/components/forms/formLinks";
 
 import { UserServices } from "@/services/userServices";
 
@@ -67,7 +67,6 @@ export default function AddLinks() {
         removeIcon();
         reset();
     };
-
     return (
         <div className="w-full flex flex-wrap gap-5">
             {/* Formulário */}
@@ -77,7 +76,7 @@ export default function AddLinks() {
                 </div>
 
                 <section className="flex flex-col border-1 border-neutral-600/20 pt-10 pb-5 px-5 gap-5 rounded-lg">
-                    <Form
+                    <FormLinks
                         form={form}
                         mode="create"
                         onSubmit={onSubmit}

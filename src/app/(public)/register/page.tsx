@@ -1,21 +1,13 @@
 "use client";
-import Inputs from "@/components/inputs";
-import { useEffect, useState } from "react";
+import FormRegister from "@/components/forms/formRegister";
 
 export default function Register() {
     return (
-        <div className="w-full max-w-3xl m-auto h-full flex flex-col border-1">
-            <h1>Register page</h1>
-            <button className="bg-primary text-white px-4 py-2 rounded">
-                Botão Primário
-            </button>
-
-            <p className="text-muted">Texto secundário</p>
-
-            <div className="bg-background text-foreground container-padrao">
-                Conteúdo da página
+        <div className="w-full h-[90vh] flex flex-col items-center justify-center">
+            <div className="w-full max-w-2xl flex flex-col items-center justify-center border rounded-2xl ">
+                <h1 className="text-2xl font-bold my-4">Cadastro</h1>
+                <FormRegister />
             </div>
-            <Inputs placeholder="Digite seu nome" />
         </div>
     );
 }

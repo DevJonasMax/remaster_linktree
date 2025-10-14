@@ -6,9 +6,9 @@ export default function PublicLayout({
     children: React.ReactNode;
 }) {
     return (
-        <div className="min-h-screen flex flex-col border-1">
+        <div className="min-h-screen flex flex-col ">
             <HeaderPublic />
-            <main className="container-padrao flex-1">{children}</main>
+            <main className="container-padrao">{children}</main>
         </div>
     );
 }

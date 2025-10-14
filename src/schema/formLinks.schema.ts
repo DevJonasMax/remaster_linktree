@@ -1,12 +1,14 @@
 import * as z from "zod";
 
 export const emojiSchema = z.object({
+    type: z.literal("emoji"),
     emoji: z.string().min(1),
     unicode: z.string().min(1),
     name: z.string().min(1),
 });
 
 export const iconSchema = z.object({
+    type: z.literal("icon"),
     icon: z.string().min(1),
     color: z.string().optional(),
     size: z.number().min(1),
@@ -20,20 +22,9 @@ export const schema = z.object({
             hostname: /^[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*$/,
             normalize: true,
         })
-        .nonempty({
-            message: "Campo obrigatório",
-        }),
-    name: z.string().min(1, {
-        message: "Campo obrigatório",
-    }),
-    icon: z
-        .union([
-            emojiSchema,
-            iconSchema, // pode ser nome de ícone
-            z.literal("").optional(), // permite vazio
-            z.null(), // permite null
-        ])
-        .optional(),
+        .nonempty({ message: "Campo obrigatório" }),
+    name: z.string().min(1, { message: "Campo obrigatório" }),
+    icon: z.union([emojiSchema, iconSchema]).nullable().optional(),
     colorName: z.string(),
     bgColor: z.string(),
     hideIcon: z.boolean().optional(),

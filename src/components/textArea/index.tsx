@@ -49,7 +49,7 @@ export default function TextArea({ maxLength = 200, onSave }: TextAreaProps) {
     return (
         <section>
             <div
-                className={`flex flex-col flex-wrap w-full px-4 border rounded-sm py-4 ${
+                className={`flex flex-col flex-wrap w-full px-4 border border-neutral-600/20 rounded-sm py-4 ${
                     edit ? "hidden" : "block"
                 }`}
             >
